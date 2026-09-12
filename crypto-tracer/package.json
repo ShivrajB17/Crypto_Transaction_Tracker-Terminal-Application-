@@ -2,16 +2,16 @@
   "name": "crypto-tracer",
   "version": "1.0.0",
   "description": "Terminal-based cryptocurrency transaction tracing application",
-  "main": "dist/index.js",
+  "main": "dist/crypto-tracer/index.js",
   "type": "module",
   "scripts": {
-    "dev": "tsx src/index.ts",
+    "dev": "tsx src/crypto-tracer/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js",
+    "start": "node dist/crypto-tracer/index.js",
     "test": "vitest run"
   },
   "bin": {
-    "crypto-tracer": "dist/index.js"
+    "crypto-tracer": "dist/crypto-tracer/index.js"
   },
   "dependencies": {
     "chalk": "^6.0.0",

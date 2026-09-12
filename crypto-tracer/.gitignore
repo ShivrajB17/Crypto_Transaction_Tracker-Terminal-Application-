@@ -1,0 +1,15 @@
+node_modules/
+dist/
+
+# Environments
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db

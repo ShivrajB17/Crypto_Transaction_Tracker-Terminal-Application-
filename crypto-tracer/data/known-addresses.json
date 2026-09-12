@@ -1,0 +1,9 @@
+[
+  {
+    "address": "0xExampleAddress123456789",
+    "label": "Example Exchange Wallet",
+    "entity_type": "Exchange",
+    "source": "Manual",
+    "notes": "Placeholder address for schema structure"
+  }
+]

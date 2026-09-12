@@ -82,7 +82,21 @@ Example Response:
 ```
 Error behavior: Returns 400 for invalid address, 502 for upstream API failure, and 500 for internal errors.
 
-*(Note: This milestone retrieves transactions but does not perform tracing/graph traversal yet.)*
+*(Note: This milestone retrieves transactions but does not perform tracing/graph traversal via the API yet. However, the core tracing engine is built.)*
+
+## Tracing Engine
+
+The core tracing engine operates on a simplified address-level directed graph model. 
+
+**Bitcoin UTXO Context:**
+While Bitcoin operates on a UTXO (Unspent Transaction Output) model, we simplify this into a graph where nodes are unique Bitcoin addresses and directed edges represent funds flowing from input addresses to output addresses in a given transaction.
+
+**BFS Tracing:**
+The engine uses Breadth-First Search (BFS) to explore the transaction graph. 
+- **Maximum Trace Depth**: The depth of the trace can be strictly limited to prevent explosive graph growth.
+- **Cycles**: The algorithm maintains a visited set to correctly terminate even if transactions form a cycle (A -> B -> C -> A).
+
+*Current Limitations:* The graph builder assumes an oversimplified mapping where every input address connects to every output address in a transaction. Coin selection and change address heuristics are not yet implemented.
 
 ## How to run tests
 ```bash

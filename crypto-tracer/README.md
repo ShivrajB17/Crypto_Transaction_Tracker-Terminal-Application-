@@ -62,6 +62,28 @@ npm run start:server
 - `GET /health` : Returns `{ "status": "ok" }`
 - `GET /api/test` : Returns `{ "message": "Crypto Forensics Tracer API is working" }`
 
+**Bitcoin API:**
+- Provider: Mempool.space (Public REST API)
+- `GET /api/bitcoin/address/:address/transactions` : Retrieves normalized transaction history for the given Bitcoin address.
+
+Example Response:
+```json
+[
+  {
+    "txid": "7f13...",
+    "inputs": [{ "txid": "prev...", "vout": 0, "value": 10000, "address": "bc1..." }],
+    "outputs": [{ "value": 9000, "address": "bc1..." }],
+    "fee": 1000,
+    "confirmed": true,
+    "blockHeight": 800000,
+    "timestamp": 1690000000
+  }
+]
+```
+Error behavior: Returns 400 for invalid address, 502 for upstream API failure, and 500 for internal errors.
+
+*(Note: This milestone retrieves transactions but does not perform tracing/graph traversal yet.)*
+
 ## How to run tests
 ```bash
 npm test

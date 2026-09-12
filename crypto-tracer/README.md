@@ -45,6 +45,23 @@ npm run build
 npm start
 ```
 
+## How to run the Backend Server
+
+For development:
+```bash
+npm run dev:server
+```
+
+To build and run:
+```bash
+npm run build
+npm run start:server
+```
+
+**Test Endpoints:**
+- `GET /health` : Returns `{ "status": "ok" }`
+- `GET /api/test` : Returns `{ "message": "Crypto Forensics Tracer API is working" }`
+
 ## How to run tests
 ```bash
 npm test

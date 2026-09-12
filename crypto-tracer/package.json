@@ -6,8 +6,10 @@
   "type": "module",
   "scripts": {
     "dev": "tsx src/crypto-tracer/index.ts",
+    "dev:server": "tsx src/crypto-tracer/server.ts",
     "build": "tsc",
     "start": "node dist/crypto-tracer/index.js",
+    "start:server": "node dist/crypto-tracer/server.js",
     "test": "vitest run"
   },
   "bin": {
@@ -17,11 +19,15 @@
     "chalk": "^6.0.0",
     "commander": "^15.0.0",
     "dotenv": "^17.4.2",
+    "express": "^5.2.1",
     "graphology": "^0.26.0",
     "ora": "^9.4.1"
   },
   "devDependencies": {
+    "@types/express": "^5.0.6",
     "@types/node": "^22.20.2",
+    "@types/supertest": "^7.2.1",
+    "supertest": "^7.2.2",
     "tsx": "^4.23.13",
     "typescript": "^7.0.2",
     "vitest": "^4.1.11"

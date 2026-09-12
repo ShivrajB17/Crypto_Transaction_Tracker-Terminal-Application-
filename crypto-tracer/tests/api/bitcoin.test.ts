@@ -117,4 +117,44 @@ describe('Bitcoin API Endpoints', () => {
     expect(tx.outputs[0].value).toBe(900);
     expect(tx.outputs[0].address).toBe('some_address');
   });
+
+  it('should return trace results for /trace endpoint', async () => {
+    fetchSpy.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ isvalid: true })
+    } as any);
+
+    const mockMempoolResponse = [
+      {
+        txid: 'mock_txid_1',
+        vin: [
+          { txid: 'prev_txid', vout: 0, prevout: { value: 1000, scriptpubkey_address: 'start_addr' } }
+        ],
+        vout: [
+          { value: 900, scriptpubkey_address: 'next_addr' }
+        ],
+        fee: 100,
+        status: { confirmed: true }
+      }
+    ];
+
+    fetchSpy.mockResolvedValueOnce({
+      ok: true,
+      json: async () => mockMempoolResponse
+    } as any);
+    
+    // For depth 1 it shouldn't fetch more, since depth=0 and maxDepth=3-1=2, wait, 
+    // it will try to fetch 'next_addr' in the next loop iteration. Let's provide a mock for that too.
+    fetchSpy.mockResolvedValueOnce({
+      ok: true,
+      json: async () => [] // empty txs for next_addr to terminate trace quickly
+    } as any);
+
+    const res = await request(app).get('/api/bitcoin/address/start_addr/trace');
+    
+    expect(res.status).toBe(200);
+    expect(res.body.length).toBeGreaterThan(0);
+    expect(res.body[0].address).toBe('start_addr');
+  });
 });
+

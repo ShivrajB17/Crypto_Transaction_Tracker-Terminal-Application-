@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import './App.css';
 import { fetchTrace, type TraceResultNode } from './TraceService';
+import { TransactionGraph } from './TransactionGraph';
 
 function App() {
   const [address, setAddress] = useState('');
@@ -74,6 +75,9 @@ function App() {
 
         {results.length > 0 && (
           <div className="results-container">
+            <h2>Trace Graph</h2>
+            <TransactionGraph data={results} candidateAddress={candidate} />
+            
             <h2>Trace Results</h2>
             {candidate && (
               <div className="candidate-box">

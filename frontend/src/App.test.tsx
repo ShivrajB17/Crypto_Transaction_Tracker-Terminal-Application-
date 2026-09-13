@@ -7,6 +7,10 @@ vi.mock('./TraceService', () => ({
   fetchTrace: vi.fn()
 }));
 
+vi.mock('./TransactionGraph', () => ({
+  TransactionGraph: () => <div data-testid="transaction-graph">Mocked Graph</div>
+}));
+
 describe('App', () => {
   it('shows error for empty input', async () => {
     render(<App />);

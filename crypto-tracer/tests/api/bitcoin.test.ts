@@ -95,6 +95,11 @@ describe('Bitcoin API Endpoints', () => {
       ok: true,
       json: async () => mockMempoolResponse
     } as any);
+    
+    fetchSpy.mockResolvedValueOnce({
+      ok: true,
+      json: async () => []
+    } as any);
 
     const res = await request(app).get('/api/bitcoin/address/some_address/transactions');
     
@@ -143,11 +148,16 @@ describe('Bitcoin API Endpoints', () => {
       json: async () => mockMempoolResponse
     } as any);
     
-    // For depth 1 it shouldn't fetch more, since depth=0 and maxDepth=3-1=2, wait, 
-    // it will try to fetch 'next_addr' in the next loop iteration. Let's provide a mock for that too.
+    // For depth 1 pagination empty
     fetchSpy.mockResolvedValueOnce({
       ok: true,
-      json: async () => [] // empty txs for next_addr to terminate trace quickly
+      json: async () => []
+    } as any);
+
+    // For next_addr trace empty
+    fetchSpy.mockResolvedValueOnce({
+      ok: true,
+      json: async () => []
     } as any);
 
     const res = await request(app).get('/api/bitcoin/address/start_addr/trace');

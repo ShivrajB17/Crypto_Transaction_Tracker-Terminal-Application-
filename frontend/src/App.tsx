@@ -26,13 +26,19 @@ function App() {
       setResults(data);
       
       if (data.length > 0) {
-        let maxDepth = -1;
+        let bestScore = -1;
         let candidateNode = null;
         for (const node of data) {
-          if (node.depth > maxDepth) {
-            maxDepth = node.depth;
+          if (node.depth === 0) continue; // Start node cannot be the end candidate
+          if (node.isPotentialChange) continue; // Penalize change addresses
+
+          let score = node.depth * 1000;
+          if (node.entityLabel) score += 10000; // Prioritize known entities
+
+          if (score > bestScore) {
+            bestScore = score;
             candidateNode = node;
-          } else if (node.depth === maxDepth && candidateNode) {
+          } else if (score === bestScore && candidateNode) {
             const val1 = node.value || 0;
             const val2 = candidateNode.value || 0;
             if (val1 > val2) {
@@ -75,13 +81,13 @@ function App() {
 
         {results.length > 0 && (
           <div className="results-container">
-            <h2>Trace Graph</h2>
+            <h2>Observed Transaction Flow</h2>
             <TransactionGraph data={results} candidateAddress={candidate} />
             
-            <h2>Trace Results</h2>
+            <h2>Detailed Trace Data</h2>
             {candidate && (
               <div className="candidate-box">
-                <strong>Candidate End Wallet:</strong> {candidate}
+                <strong>Candidate Endpoint:</strong> {candidate}
               </div>
             )}
             <table>
@@ -89,6 +95,7 @@ function App() {
                 <tr>
                   <th>Depth</th>
                   <th>Address</th>
+                  <th>Label</th>
                   <th>Parent Address</th>
                   <th>TxID</th>
                   <th>Value</th>
@@ -98,7 +105,8 @@ function App() {
                 {results.map((node, i) => (
                   <tr key={i} className={node.address === candidate ? 'highlight' : ''}>
                     <td>{node.depth}</td>
-                    <td>{node.address}</td>
+                    <td>{node.address} {node.isPotentialChange ? '(Change)' : ''}</td>
+                    <td>{node.entityLabel || '-'}</td>
                     <td>{node.parentAddress || '-'}</td>
                     <td>{node.txid ? `${node.txid.substring(0, 10)}...` : '-'}</td>
                     <td>{node.value !== null ? node.value : '-'}</td>

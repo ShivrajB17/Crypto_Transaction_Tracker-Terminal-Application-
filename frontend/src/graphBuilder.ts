@@ -26,24 +26,38 @@ export function buildGraphElements(
     // Style determination
     let background = '#f1f5f9';
     let borderColor = '#94a3b8';
+    let borderStyle = 'solid';
     
+    let labelText = item.address;
+
     if (isStart) {
       background = '#dcfce7'; // green-100
       borderColor = '#22c55e'; // green-500
+      labelText = item.entityLabel ? `Start (🏛️ ${item.entityLabel}):\n${item.address}` : `Start:\n${item.address}`;
     } else if (isCandidate) {
       background = '#fef08a'; // yellow-200
       borderColor = '#eab308'; // yellow-500
+      labelText = item.entityLabel ? `Endpoint (🏛️ ${item.entityLabel}):\n${item.address}` : `Endpoint:\n${item.address}`;
+    } else if (item.entityLabel) {
+      background = '#dbeafe'; // blue-100
+      borderColor = '#3b82f6'; // blue-500
+      labelText = `🏛️ ${item.entityLabel}\n${item.address}`;
+    } else if (item.isPotentialChange) {
+      background = '#f8fafc'; // slate-50
+      borderColor = '#94a3b8'; // slate-400
+      borderStyle = 'dashed';
+      labelText = `Potential Change\n${item.address}`;
     }
 
     nodes.push({
       id: item.address,
       position: { x, y },
       data: { 
-        label: isStart ? `Start: ${item.address}` : isCandidate ? `End: ${item.address}` : item.address,
+        label: labelText,
       },
       style: {
         background,
-        border: `2px solid ${borderColor}`,
+        border: `2px ${borderStyle} ${borderColor}`,
         borderRadius: '8px',
         padding: '10px',
         fontSize: '12px',

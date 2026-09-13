@@ -6,6 +6,9 @@ export interface TraceResultNode {
   parentAddress: string | null;
   txid: string | null;
   value: number | null;
+  entityLabel?: string;
+  entityType?: string;
+  isPotentialChange?: boolean;
 }
 
 /**
@@ -55,7 +58,8 @@ export function trace(
           depth: current.depth + 1,
           parentAddress: source,
           txid: attributes.txid as string || null,
-          value: attributes.value as number || null
+          value: attributes.value as number || null,
+          isPotentialChange: attributes.isPotentialChange as boolean || false
         });
       }
     });

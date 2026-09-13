@@ -12,6 +12,8 @@ export function buildAddressGraph(transactions: NormalizedBitcoinTransaction[]):
     const inputs = tx.inputs.filter(i => i.address !== null);
     const outputs = tx.outputs.filter(o => o.address !== null);
     
+    const totalInputValue = inputs.reduce((sum, i) => sum + i.value, 0);
+
     for (const input of inputs) {
       const inAddr = input.address!;
       if (!graph.hasNode(inAddr)) {
@@ -24,11 +26,19 @@ export function buildAddressGraph(transactions: NormalizedBitcoinTransaction[]):
           graph.addNode(outAddr, { type: 'address' });
         }
         
+        // Conservative change heuristics:
+        // 1. Returning to the exact same address
+        // 2. An output receiving > 90% of the total input value
+        const isPotentialChange = 
+          (inAddr === outAddr) || 
+          (totalInputValue > 0 && output.value > totalInputValue * 0.9);
+
         graph.addEdge(inAddr, outAddr, {
           txid: tx.txid,
           value: output.value,
           fee: tx.fee,
-          timestamp: tx.timestamp
+          timestamp: tx.timestamp,
+          isPotentialChange
         });
       }
     }

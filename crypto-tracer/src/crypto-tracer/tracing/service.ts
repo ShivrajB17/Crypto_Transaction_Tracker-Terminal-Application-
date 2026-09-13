@@ -3,6 +3,30 @@ import { NormalizedBitcoinTransaction } from '../blockchain/models.js';
 import { buildAddressGraph } from './graph.js';
 import { trace, TraceResultNode } from './engine.js';
 
+import fs from 'fs';
+import path from 'path';
+
+let knownEntitiesCache: Record<string, any> | null = null;
+
+function getKnownEntities(): Record<string, any> {
+  if (knownEntitiesCache) return knownEntitiesCache;
+  try {
+    const dataPath = path.resolve(process.cwd(), 'data/known-addresses.json');
+    const raw = fs.readFileSync(dataPath, 'utf8');
+    const list = JSON.parse(raw);
+    knownEntitiesCache = {};
+    for (const item of list) {
+      if (item.address) {
+        knownEntitiesCache[item.address] = item;
+      }
+    }
+  } catch (err) {
+    console.error('Failed to load known entities', err);
+    knownEntitiesCache = {};
+  }
+  return knownEntitiesCache!;
+}
+
 export async function recursiveTrace(startAddress: string, maxDepth: number = 3): Promise<TraceResultNode[]> {
   const allTransactions: NormalizedBitcoinTransaction[] = [];
   const fetchedAddresses = new Set<string>();
@@ -59,5 +83,16 @@ export async function recursiveTrace(startAddress: string, maxDepth: number = 3)
 
   const graph = buildAddressGraph(uniqueTxs);
   
-  return trace(startAddress, graph, maxDepth);
+  const results = trace(startAddress, graph, maxDepth);
+  
+  // Map known entities to results
+  const known = getKnownEntities();
+  for (const node of results) {
+    if (known[node.address]) {
+      node.entityLabel = known[node.address].label;
+      node.entityType = known[node.address].entity_type;
+    }
+  }
+  
+  return results;
 }

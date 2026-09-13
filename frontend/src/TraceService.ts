@@ -4,6 +4,9 @@ export interface TraceResultNode {
   parentAddress: string | null;
   txid: string | null;
   value: number | null;
+  entityLabel?: string;
+  entityType?: string;
+  isPotentialChange?: boolean;
 }
 
 export async function fetchTrace(address: string): Promise<TraceResultNode[]> {

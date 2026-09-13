@@ -35,7 +35,7 @@ describe('App', () => {
     expect(screen.getByText('Tracing...')).toBeInTheDocument();
 
     await waitFor(() => {
-      expect(screen.getByText('Candidate End Wallet:')).toBeInTheDocument();
+      expect(screen.getByText('Candidate Endpoint:')).toBeInTheDocument();
     });
 
     expect(screen.getAllByText('addr2').length).toBeGreaterThan(0);

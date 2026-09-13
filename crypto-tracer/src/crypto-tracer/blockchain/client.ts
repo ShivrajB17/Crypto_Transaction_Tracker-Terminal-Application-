@@ -23,16 +23,33 @@ export async function validateBitcoinAddress(address: string): Promise<boolean> 
   }
 }
 
-export async function fetchBitcoinTransactions(address: string): Promise<NormalizedBitcoinTransaction[]> {
+export async function fetchBitcoinTransactions(address: string, maxPages: number = 3): Promise<NormalizedBitcoinTransaction[]> {
   try {
-    const response = await fetch(`${MEMPOOL_BASE_URL}/address/${address}/txs`);
-    if (!response.ok) {
-      throw new BlockchainAPIError(`Mempool API error: ${response.statusText}`, response.status);
+    let allRawTxs: any[] = [];
+    let lastSeenTxid: string | null = null;
+    let page = 0;
+
+    while (page < maxPages) {
+      const url: string = lastSeenTxid 
+        ? `${MEMPOOL_BASE_URL}/address/${address}/txs/chain/${lastSeenTxid}`
+        : `${MEMPOOL_BASE_URL}/address/${address}/txs`;
+        
+      const response: Response = await fetch(url);
+      if (!response.ok) {
+        throw new BlockchainAPIError(`Mempool API error: ${response.statusText}`, response.status);
+      }
+      
+      const rawTxs: any[] = await response.json();
+      if (!Array.isArray(rawTxs) || rawTxs.length === 0) {
+        break; // No more transactions
+      }
+      
+      allRawTxs = allRawTxs.concat(rawTxs);
+      lastSeenTxid = rawTxs[rawTxs.length - 1].txid;
+      page++;
     }
     
-    const rawTxs = await response.json();
-    
-    return rawTxs.map((tx: any) => {
+    return allRawTxs.map((tx: any) => {
       return {
         txid: tx.txid,
         inputs: tx.vin.map((vin: any) => ({

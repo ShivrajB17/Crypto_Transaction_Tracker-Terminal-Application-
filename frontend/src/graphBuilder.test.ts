@@ -13,7 +13,7 @@ describe('graphBuilder', () => {
     expect(nodes).toHaveLength(1);
     expect(edges).toHaveLength(0);
     expect(nodes[0].id).toBe('addr1');
-    expect(nodes[0].data.label).toContain('Start: addr1');
+    expect(nodes[0].data.label).toContain('Start:\naddr1');
     // It's both start and candidate, background should be green (start takes precedence in style logic)
     expect(nodes[0].style?.background).toBe('#dcfce7');
   });
@@ -59,5 +59,26 @@ describe('graphBuilder', () => {
     
     // addr3 is candidate
     expect(nodes[2].style?.background).toBe('#fef08a');
+  });
+
+  it('applies styles for known entities and potential change', () => {
+    const data: TraceResultNode[] = [
+      { address: 'addr1', depth: 0, parentAddress: null, txid: null, value: null },
+      { address: 'addr2', depth: 1, parentAddress: 'addr1', txid: 'tx1', value: 50, entityLabel: 'Binance' },
+      { address: 'addr3', depth: 1, parentAddress: 'addr1', txid: 'tx1', value: 50, isPotentialChange: true },
+    ];
+    
+    const { nodes } = buildGraphElements(data, null);
+    
+    expect(nodes).toHaveLength(3);
+    
+    // Known entity (addr2)
+    expect(nodes[1].style?.background).toBe('#dbeafe'); // blue
+    expect(nodes[1].data.label).toContain('🏛️ Binance');
+    
+    // Potential change (addr3)
+    expect(nodes[2].style?.background).toBe('#f8fafc'); // gray
+    expect(nodes[2].style?.border).toContain('dashed');
+    expect(nodes[2].data.label).toContain('Potential Change');
   });
 });

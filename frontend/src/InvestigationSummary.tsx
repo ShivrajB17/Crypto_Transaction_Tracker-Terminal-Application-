@@ -49,14 +49,14 @@ export const InvestigationSummary: React.FC<InvestigationSummaryProps> = ({ data
           <div style={{ display: 'flex', gap: '0.75rem', backgroundColor: '#e2e8f0', padding: '0.25rem 0.5rem', borderRadius: '4px', fontSize: '0.75rem', color: '#475569', fontWeight: 600 }}>
             <span>Config: Depth {activeConfig.depth}</span>
             <span>|</span>
-            <span>Max Addr {activeConfig.nodes}</span>
+            <span>Max Fetches {activeConfig.nodes}</span>
           </div>
         )}
       </div>
       
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <span style={{ fontSize: '0.875rem', color: '#64748b', fontWeight: 500 }}>Addresses Traced</span>
+          <span style={{ fontSize: '0.875rem', color: '#64748b', fontWeight: 500 }}>Addresses Discovered</span>
           <span style={{ fontSize: '1.25rem', color: '#0f172a', fontWeight: 600 }} data-testid="summary-addresses">{uniqueAddresses}</span>
         </div>
         

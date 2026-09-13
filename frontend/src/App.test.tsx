@@ -61,7 +61,7 @@ describe('App', () => {
     const addressInput = screen.getByPlaceholderText('Enter Bitcoin Address...');
     // These use labels defined in the App component
     const depthInput = screen.getByLabelText('Max Depth');
-    const nodesInput = screen.getByLabelText('Max Addresses');
+    const nodesInput = screen.getByLabelText('Max Fetched Addrs');
     const button = screen.getByText('Trace Funds');
 
     fireEvent.change(addressInput, { target: { value: 'addr1' } });

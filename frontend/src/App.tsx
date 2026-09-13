@@ -98,7 +98,7 @@ function App() {
             </div>
             
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <label htmlFor="maxNodes" style={{ fontSize: '0.75rem', fontWeight: 600, color: '#475569', marginBottom: '0.25rem' }}>Max Addresses</label>
+              <label htmlFor="maxNodes" style={{ fontSize: '0.75rem', fontWeight: 600, color: '#475569', marginBottom: '0.25rem' }}>Max Fetched Addrs</label>
               <input 
                 id="maxNodes"
                 type="number" 

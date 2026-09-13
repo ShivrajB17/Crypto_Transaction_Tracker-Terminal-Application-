@@ -4,9 +4,10 @@ import type { TraceResultNode } from './TraceService';
 interface InvestigationSummaryProps {
   data: TraceResultNode[];
   candidateAddress: string | null;
+  activeConfig?: { depth: number, nodes: number } | null;
 }
 
-export const InvestigationSummary: React.FC<InvestigationSummaryProps> = ({ data, candidateAddress }) => {
+export const InvestigationSummary: React.FC<InvestigationSummaryProps> = ({ data, candidateAddress, activeConfig }) => {
   if (!data || data.length === 0) {
     return null;
   }
@@ -39,9 +40,19 @@ export const InvestigationSummary: React.FC<InvestigationSummaryProps> = ({ data
         fontFamily: 'system-ui, -apple-system, sans-serif'
       }}
     >
-      <h3 style={{ marginTop: 0, marginBottom: '1rem', color: '#0f172a', fontSize: '1.125rem' }}>
-        Investigation Summary
-      </h3>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+        <h3 style={{ margin: 0, color: '#0f172a', fontSize: '1.125rem' }}>
+          Investigation Summary
+        </h3>
+        
+        {activeConfig && (
+          <div style={{ display: 'flex', gap: '0.75rem', backgroundColor: '#e2e8f0', padding: '0.25rem 0.5rem', borderRadius: '4px', fontSize: '0.75rem', color: '#475569', fontWeight: 600 }}>
+            <span>Config: Depth {activeConfig.depth}</span>
+            <span>|</span>
+            <span>Max Addr {activeConfig.nodes}</span>
+          </div>
+        )}
+      </div>
       
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
         <div style={{ display: 'flex', flexDirection: 'column' }}>

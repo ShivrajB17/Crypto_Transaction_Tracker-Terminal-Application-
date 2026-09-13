@@ -53,4 +53,22 @@ describe('App', () => {
 
     expect(await screen.findByText('Upstream API failed')).toBeInTheDocument();
   });
+
+  it('passes configured depth and node limits to fetchTrace', async () => {
+    (TraceService.fetchTrace as any).mockResolvedValue([]);
+
+    render(<App />);
+    const addressInput = screen.getByPlaceholderText('Enter Bitcoin Address...');
+    // These use labels defined in the App component
+    const depthInput = screen.getByLabelText('Max Depth');
+    const nodesInput = screen.getByLabelText('Max Addresses');
+    const button = screen.getByText('Trace Funds');
+
+    fireEvent.change(addressInput, { target: { value: 'addr1' } });
+    fireEvent.change(depthInput, { target: { value: '4' } });
+    fireEvent.change(nodesInput, { target: { value: '25' } });
+    fireEvent.click(button);
+
+    expect(TraceService.fetchTrace).toHaveBeenCalledWith('addr1', 4, 25);
+  });
 });

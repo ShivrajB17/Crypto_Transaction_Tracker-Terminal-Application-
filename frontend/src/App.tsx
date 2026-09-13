@@ -6,10 +6,15 @@ import { InvestigationSummary } from './InvestigationSummary';
 
 function App() {
   const [address, setAddress] = useState('');
+  const [maxDepth, setMaxDepth] = useState<number>(3);
+  const [maxNodes, setMaxNodes] = useState<number>(15);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<TraceResultNode[]>([]);
   const [candidate, setCandidate] = useState<string | null>(null);
+  
+  // Track active config for the summary panel
+  const [activeConfig, setActiveConfig] = useState<{ depth: number, nodes: number } | null>(null);
 
   const handleTrace = async () => {
     if (!address.trim()) {
@@ -21,10 +26,12 @@ function App() {
     setError(null);
     setResults([]);
     setCandidate(null);
+    setActiveConfig(null);
 
     try {
-      const data = await fetchTrace(address.trim());
+      const data = await fetchTrace(address.trim(), maxDepth, maxNodes);
       setResults(data);
+      setActiveConfig({ depth: maxDepth, nodes: maxNodes });
       
       if (data.length > 0) {
         let bestScore = -1;
@@ -65,24 +72,56 @@ function App() {
       </header>
       
       <main>
-        <div className="search-box">
+        <div className="search-box" style={{ flexWrap: 'wrap', gap: '1rem' }}>
           <input 
             type="text" 
             placeholder="Enter Bitcoin Address..." 
             value={address}
             onChange={(e) => setAddress(e.target.value)}
             disabled={loading}
+            style={{ flexGrow: 1, minWidth: '300px' }}
           />
-          <button onClick={handleTrace} disabled={loading}>
-            {loading ? 'Tracing...' : 'Trace Funds'}
-          </button>
+          
+          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <label htmlFor="maxDepth" style={{ fontSize: '0.75rem', fontWeight: 600, color: '#475569', marginBottom: '0.25rem' }}>Max Depth</label>
+              <input 
+                id="maxDepth"
+                type="number" 
+                min={1} 
+                max={5} 
+                value={maxDepth}
+                onChange={(e) => setMaxDepth(parseInt(e.target.value) || 3)}
+                disabled={loading}
+                style={{ width: '80px', padding: '0.5rem' }}
+              />
+            </div>
+            
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <label htmlFor="maxNodes" style={{ fontSize: '0.75rem', fontWeight: 600, color: '#475569', marginBottom: '0.25rem' }}>Max Addresses</label>
+              <input 
+                id="maxNodes"
+                type="number" 
+                min={1} 
+                max={50} 
+                value={maxNodes}
+                onChange={(e) => setMaxNodes(parseInt(e.target.value) || 15)}
+                disabled={loading}
+                style={{ width: '90px', padding: '0.5rem' }}
+              />
+            </div>
+
+            <button onClick={handleTrace} disabled={loading} style={{ height: 'fit-content', alignSelf: 'flex-end' }}>
+              {loading ? 'Tracing...' : 'Trace Funds'}
+            </button>
+          </div>
         </div>
 
         {error && <div className="error-message" role="alert">{error}</div>}
 
         {results.length > 0 && (
           <div className="results-container">
-            <InvestigationSummary data={results} candidateAddress={candidate} />
+            <InvestigationSummary data={results} candidateAddress={candidate} activeConfig={activeConfig} />
             
             <h2>Observed Transaction Flow</h2>
             <TransactionGraph data={results} candidateAddress={candidate} />

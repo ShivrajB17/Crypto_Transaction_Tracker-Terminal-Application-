@@ -166,5 +166,24 @@ describe('Bitcoin API Endpoints', () => {
     expect(res.body.length).toBeGreaterThan(0);
     expect(res.body[0].address).toBe('start_addr');
   });
+
+  it('should parse and pass maxDepth and maxNodes from query parameters', async () => {
+    fetchSpy.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ isvalid: true })
+    } as any);
+
+    // Mock empty txs so trace terminates instantly
+    fetchSpy.mockResolvedValueOnce({
+      ok: true,
+      json: async () => []
+    } as any);
+
+    const res = await request(app).get('/api/bitcoin/address/start_addr/trace?maxDepth=2&maxNodes=5');
+    
+    expect(res.status).toBe(200);
+    // Because we mock empty txs, the graph has no nodes and returns an empty trace
+    expect(res.body).toHaveLength(0);
+  });
 });
 

@@ -9,9 +9,9 @@ export interface TraceResultNode {
   isPotentialChange?: boolean;
 }
 
-export async function fetchTrace(address: string): Promise<TraceResultNode[]> {
+export async function fetchTrace(address: string, maxDepth: number = 3, maxNodes: number = 15): Promise<TraceResultNode[]> {
   const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-  const response = await fetch(`${baseUrl}/api/bitcoin/address/${address}/trace`);
+  const response = await fetch(`${baseUrl}/api/bitcoin/address/${address}/trace?maxDepth=${maxDepth}&maxNodes=${maxNodes}`);
   
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));

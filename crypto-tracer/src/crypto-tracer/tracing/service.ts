@@ -27,21 +27,24 @@ function getKnownEntities(): Record<string, any> {
   return knownEntitiesCache!;
 }
 
-export async function recursiveTrace(startAddress: string, maxDepth: number = 3): Promise<TraceResultNode[]> {
+export async function recursiveTrace(
+  startAddress: string, 
+  maxDepth: number = 3, 
+  maxNodes: number = 15
+): Promise<TraceResultNode[]> {
   const allTransactions: NormalizedBitcoinTransaction[] = [];
   const fetchedAddresses = new Set<string>();
   
   const queue: { address: string; depth: number }[] = [{ address: startAddress, depth: 0 }];
   fetchedAddresses.add(startAddress);
   
-  const MAX_API_CALLS = 15; // Bound to avoid rate limits
   let apiCalls = 0;
 
   while (queue.length > 0) {
     const current = queue.shift()!;
     
-    if (apiCalls >= MAX_API_CALLS) {
-      console.warn('API call limit reached, stopping recursive fetch');
+    if (apiCalls >= maxNodes) {
+      console.warn('Max node limit reached, stopping recursive fetch');
       break;
     }
     

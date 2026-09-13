@@ -54,6 +54,7 @@ export function buildGraphElements(
       position: { x, y },
       data: { 
         label: labelText,
+        rawData: item,
       },
       style: {
         background,
@@ -78,6 +79,7 @@ export function buildGraphElements(
         source: item.parentAddress,
         target: item.address,
         label: edgeLabel,
+        data: { rawData: item },
         labelStyle: { fill: '#475569', fontSize: 10, fontWeight: 'bold' },
         labelBgStyle: { fill: '#ffffff', fillOpacity: 0.8 },
         markerEnd: {
